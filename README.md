@@ -4,6 +4,12 @@ based around
 for its ease of machine emission and parsing. It also prefers to log to
 stdout as in [Twelve-Factor Apps](https://12factor.net/).
 
+Some nice to haves (that are not here \[yet?\]):
+
+  - Explicit multi-threading support,
+
+  - Tracing (think Hawktracer, Tracy),
+
 # License
 
   - MPL-2. (Mozilla Public License, v2)
@@ -11,6 +17,28 @@ stdout as in [Twelve-Factor Apps](https://12factor.net/).
 # Dependencies
 
   - This module is currently standalone.
+
+# How the docs are built
+
+`sklog` is written with a literate approach. Special lines starting with
+`#-` indicate some Asciidoc prose occurs on the line. All other lines
+are code as per usual.
+
+There is no `tangle` phase; source files are built directly with Nim.
+The `weave` phase is handled by `weave.py` and "flips" comment lines to
+prose and code lines to source code blocks.
+
+In this case `readme-base.adoc` is some front matter for the repository,
+and glue instructions to have the examples and documentation included.
+We then use [Asciidoctor.rb](https://asciidoctor.org/) to turn the front
+matter to Docbook and finally [Pandoc](https://pandoc.org/) to turn the
+Docbook in to Git Flavored Markdown for Sourcehut and Github.
+
+# Other things
+
+If you need a lot of shiny bells and whistles you might be better served
+by [Chronicles](https://github.com/status-im/nim-chronicles). They have
+done a fine job.
 
 # Examples
 
