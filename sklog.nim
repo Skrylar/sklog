@@ -100,16 +100,3 @@ proc qlog*(flute: LogChimney; values: var seq[LogKeyValues]) =
 proc flute_to_logfmt_stdout*(values: var seq[LogKeyValues]) =
   ## Writes the incoming set of values in logfmt, to standard output.
   dump_the_vars(values)
-
-log({"milk": "unquoted", "level": "info", "status": "ok"})
-log({"milk": "toast is good", "level": "info", "status": "ok"})
-
-var test_chimney: seq[LogFlute]
-
-test_chimney &= proc(values: var seq[LogKeyValues]) =
-  # This could be a real value, like current time or thread ID
-  values &= ("rustled", "jimmies")
-test_chimney &= flute_to_logfmt_stdout
-
-# the jimmies of this log entry will be rustled on its way to stdout
-test_chimney.log({"diddly": "squat"})
