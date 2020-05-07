@@ -1,3 +1,5 @@
+#- = Introduction to Fluting and Chimneys
+
 import sklog
 
 #- A chimney is just a sequence of fluting.

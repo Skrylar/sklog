@@ -1,3 +1,4 @@
+#- = Simple usage example
 
 import sklog
 
@@ -5,7 +6,7 @@ import sklog
 #- standard output.
 log({"milk": "unquoted", "level": "info", "status": "ok"})
 #- This is done in logfmt so you will see `milk=unquoted`.
-
+#-
 #- If a value contains anything too weird (alphanumerics, dashes and underlines
 #- are okay) then the string will be quoted.
 log({"milk": "toast is good", "level": "info", "status": "ok"})

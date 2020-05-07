@@ -1,0 +1,28 @@
+:leveloffset: +1
+
+`sklog` is a lightweight structured logging
+module. It is primarily based around
+https://rollout.io/blog/logfmt-a-log-format-thats-easy-to-read-and-write/[logfmt]
+for its ease of machine emission and parsing. It also prefers
+to log to stdout as in https://12factor.net/[Twelve-Factor Apps].
+
+= License
+
+ - MPL-2. (Mozilla Public License, v2)
+
+= Dependencies
+
+ - This module is currently standalone.
+
+= Examples
+:leveloffset: +1
+
+include::example01.adoc[]
+
+include::example02.adoc[]
+
+:leveloffset: -1
+= The module
+:leveloffset: +1
+
+include::sklog.adoc[]

@@ -1,0 +1,31 @@
+
+rule weave
+    command = python3 weave.py $in > $out
+
+rule adoc2html
+    command = asciidoctor $in -o $out
+
+rule adoc2xml
+    command = asciidoctor -b docbook5 $in -o $out
+
+rule xml2md
+    command = pandoc -f docbook $in -t gfm > $out
+
+rule nim
+    command = nim c -o:$out $in
+
+build example01: nim example01.nim
+build example01.adoc: weave example01.nim
+#build example01.html: adoc2html example01.adoc
+
+build example02: nim example02.nim example02
+build example02.adoc: weave example02.nim
+#build example02.html: adoc2html example02.adoc
+
+build sklog: nim sklog.nim
+build sklog.adoc: weave sklog.nim
+build sklog.html: adoc2html sklog.adoc
+
+build readme.xml: adoc2xml readme-base.adoc | sklog.adoc example01.adoc example02.adoc
+build README.md: xml2md readme.xml
+

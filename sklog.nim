@@ -1,8 +1,15 @@
+#- = Structured logging
 
 type
-  LogKeyValues* = (string, string)
-  LogFlute* = proc(variables: var seq[LogKeyValues]) {.closure.}
-  LogChimney* = seq[LogFlute]
+    #- This is a string-string tuple because the syntax `{"foo": "bar"}`
+    #- is a table constructor that produces arrays of string-string tuples.
+    LogKeyValues* = (string, string)
+    #- A flute ("fluting") will modify or emit values on their way through
+    #- the chimney. This can be used to mark which script interpreter is
+    #- making the log events, or which thread is doing so during fork-joins.
+    LogFlute* = proc(variables: var seq[LogKeyValues]) {.closure.}
+    #- A chimney is an ordered sequence of flutes.
+    LogChimney* = seq[LogFlute]
 
 #- == Checking if input needs special quotation
 
@@ -42,8 +49,9 @@ proc quote_for_json*(input: string): string =
   ## Returns a new string which has been safely quoted to echo via JSON.
   discard # TODO
 
-#- == Quickly sending logs directly to a console
-
+#- == Mixin: write key/values to stdout
+#- Used because writing to stdout is the same, whether we do it from the
+#- quick no-copy `log` call or the slower copying `log` call.
 template dump_the_vars(values: untyped) =
   var c = values.high
   for v in values:
@@ -66,6 +74,10 @@ template dump_the_vars(values: untyped) =
   write stdout, "\n"
   flushFile stdout
 
+#- == Logging without chimneys
+#- This is *very* efficient since it directly writes the values to stdout
+#- and does no copying. Useful for processes too small to bother with
+#- more complicated logging.
 proc log*(values: openarray[LogKeyValues]) =
   ## Emits a key=value array to log output; bypasses any fluting.
   dump_the_vars(values)
@@ -91,12 +103,22 @@ proc log*(flute: LogChimney; values: openarray[LogKeyValues]) =
   for f in flute:
     f(x)
 
+#- === Quick logging, with disposable data
+#- Quick logging assumes you have a mutable sequence,
+#- perhaps because you have been building a
+#- https://www.brandur.org/canonical-log-lines[canonical log line]. It also
+#- assumes you are sacrificing the sequence to the chimney.
+#-
+#- What makes this "quick" is that the non-quick `log` routine makes a
+#- copy of its input.
 proc qlog*(flute: LogChimney; values: var seq[LogKeyValues]) =
   ## Send values down the chimney. The value sequence you provide is gonna
   ## get mangled by soot on the way down.
   for f in flute:
     f(values)
 
+#- === Sending values to stdout via the chimney
 proc flute_to_logfmt_stdout*(values: var seq[LogKeyValues]) =
   ## Writes the incoming set of values in logfmt, to standard output.
   dump_the_vars(values)
+
